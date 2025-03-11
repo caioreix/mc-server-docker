@@ -1,0 +1,51 @@
+services:
+  mc:
+    image: itzg/minecraft-server
+    ports:
+      - "25565:25565"
+    environment:
+      EULA: "true"
+      MODPACK_PLATFORM: AUTO_CURSEFORGE
+      # Allocate API key from https://console.curseforge.com/
+      # and set in .env file making sure to double up dollar signs, such as
+      # CF_API_KEY=$$2a$$10$$....
+      # Refer to https://docker-minecraft-server.readthedocs.io/en/latest/types-and-platforms/mod-platforms/auto-curseforge/#api-key
+      CF_API_KEY: ${CF_API_KEY}
+      CF_PAGE_URL: https://www.curseforge.com/minecraft/modpacks/all-the-mods-9-to-the-sky
+      # Optional: select a specific version/file
+      CF_FILENAME_MATCHER: "1.1.5"
+      MEMORY: 4G
+    volumes:
+      - ./mc-data:/data
+  backup:
+    image: itzg/mc-backup
+    entrypoint: ""
+    command: /custom-entry.sh
+    # command: sleep infinity
+    environment:
+      BACKUP_INTERVAL: "5m"
+      RCON_HOST: mc
+      BACKUP_METHOD: restic
+      # BACKUP_METHOD: rclone
+      RESTIC_HOSTNAME: atm9tts
+      RESTIC_REPOSITORY: rclone:SUPABASE:mc-server/atm9tts
+      # RCLONE_REMOTE: DRIVE:mc-server/atm9tts
+      RCLONE_LOG_LEVEL: ERROR
+    env_file:
+      - ../.env
+    volumes:
+      # mount volume pre-configured using a host mounted file
+      # - ../rclone.conf:/config/rclone/
+      # or configure one into a named volume using
+      # docker run -it --rm -v rclone-config:/config/rclone rclone/rclone config
+      # and change the above to
+      # - rclone-config:/config/rclone
+      - ./mc-data:/data:ro
+      - ./backups:/backups
+      - ./custom-entry.sh:/custom-entry.sh
+# volumes:
+#   # Uncomment this if using the config step above
+#  rclone-config:
+#    external: true
+#   mc: {}
+#   backups: {}
