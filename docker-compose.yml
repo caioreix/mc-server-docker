@@ -2,15 +2,17 @@ services:
   mc:
     image: itzg/minecraft-server
     container_name: ${PROJECT_NAME}-mc
+    stdin_open: true
+    tty: true
     ports:
-      - "25565:25565"
+      - "0.0.0.0:25565:25565"
     environment:
       EULA: "true"
       MODPACK_PLATFORM: ${MODPACK_PLATFORM}
       CF_API_KEY: ${CF_API_KEY}
       CF_PAGE_URL: ${CF_PAGE_URL}
       CF_FILENAME_MATCHER: ${CF_FILENAME_MATCHER}
-      MEMORY: 4G
+      ENABLE_RCON: "true"
     env_file:
       - .env
       - .${PROJECT_NAME}.env
@@ -20,7 +22,7 @@ services:
     image: itzg/mc-backup
     container_name: ${PROJECT_NAME}-backup
     environment:
-      BACKUP_INTERVAL: "5m"
+      BACKUP_INTERVAL: "2h"
       RCON_HOST: mc
       BACKUP_METHOD: restic
       RESTIC_PASSWORD: ${RESTIC_PASSWORD}

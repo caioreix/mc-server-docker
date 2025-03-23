@@ -18,6 +18,19 @@ install:
 	@sudo apt install restic
 	@sudo -v ; curl https://rclone.org/install.sh | sudo bash
 
+restore:
+	@restic restore latest --target ./$(PROJECT_NAME)/backups -r rclone:SUPABASE:mc-server/${PROJECT_NAME}
+
+rclone:
+	rclone ls SUPABASE:mc-server/atm9tts -vv
+
+# https://docker-minecraft-server.readthedocs.io/en/latest/commands/
+rcon: check-vars
+	@docker exec -i $(PROJECT_NAME)-mc rcon-cli
+
+attach: check-vars
+	@docker attach $(PROJECT_NAME)-mc
+
 run: check-vars
 	@echo "Running $(PROJECT_NAME)"
 	@docker compose -f $(ROOT_DIR)/docker-compose.yml --env-file $(ROOT_DIR)/.env --env-file $(ROOT_DIR)/.$(PROJECT_NAME).env up -d
