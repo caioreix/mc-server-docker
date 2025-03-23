@@ -9,6 +9,8 @@ export $(shell sed 's/=.*//' $(ROOT_DIR)/.env)
 
 REQUIRED_VARS := PROJECT_NAME MODPACK_PLATFORM CF_PAGE_URL RESTIC_PASSWORD
 
+PROFILE_ARG := $(if $(filter true,$(ENABLE_BACKUP)),--profile backup,)
+
 check-vars:
 	@$(foreach var,$(REQUIRED_VARS),\
         $(if $(value $(var)),,\
@@ -33,8 +35,8 @@ attach: check-vars
 
 run: check-vars
 	@echo "Running $(PROJECT_NAME)"
-	@docker compose -f $(ROOT_DIR)/docker-compose.yml --env-file $(ROOT_DIR)/.env --env-file $(ROOT_DIR)/.$(PROJECT_NAME).env up -d
+	@docker compose -f $(ROOT_DIR)/docker-compose.yml --env-file $(ROOT_DIR)/.env --env-file $(ROOT_DIR)/.$(PROJECT_NAME).env $(PROFILE_ARG) up -d
 
 stop: check-vars
 	@echo "Stopping $(PROJECT_NAME)"
-	@docker compose -f $(ROOT_DIR)/docker-compose.yml --env-file $(ROOT_DIR)/.env --env-file $(ROOT_DIR)/.$(PROJECT_NAME).env down
+	@docker compose -f $(ROOT_DIR)/docker-compose.yml --env-file $(ROOT_DIR)/.env --env-file $(ROOT_DIR)/.$(PROJECT_NAME).env $(PROFILE_ARG) down

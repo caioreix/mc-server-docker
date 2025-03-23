@@ -21,6 +21,8 @@ services:
   backup:
     image: itzg/mc-backup
     container_name: ${PROJECT_NAME}-backup
+    profiles:
+      - backup
     environment:
       BACKUP_INTERVAL: "2h"
       RCON_HOST: mc
