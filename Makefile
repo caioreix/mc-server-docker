@@ -47,7 +47,7 @@ attach: check-vars
 
 run: download-zip check-vars
 	@echo "Running $(PROJECT_NAME)"
-	@docker compose -f $(ROOT_DIR)/docker-compose.yml --env-file $(ROOT_DIR)/.env --env-file $(ROOT_DIR)/.$(PROJECT_NAME).env $(PROFILE_ARG) up -d
+	@docker compose -f $(ROOT_DIR)/docker-compose.yml --env-file $(ROOT_DIR)/.env --env-file $(ROOT_DIR)/.$(PROJECT_NAME).env $(PROFILE_ARG) up -d --force-recreate --remove-orphans
 
 download-zip: check-vars
 	@if [ ! -z "$(ZIP_URL)" ]; then \
