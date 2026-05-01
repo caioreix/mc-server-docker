@@ -11,6 +11,7 @@ services:
       - "0.0.0.0:25565:25565"
     environment:
       EULA: "true"
+      JVM_VERSION: ${JVM_VERSION}
       MODPACK_PLATFORM: ${MODPACK_PLATFORM}
       CF_API_KEY: ${CF_API_KEY}
       CF_PAGE_URL: ${CF_PAGE_URL}
@@ -21,6 +22,7 @@ services:
       - .${PROJECT_NAME}.env
     volumes:
       - ./${PROJECT_NAME}/mc-data:/data
+
   mc-zip:
     image: itzg/minecraft-server
     container_name: ${PROJECT_NAME}-mc
@@ -33,6 +35,7 @@ services:
       - "0.0.0.0:25565:25565"
     environment:
       EULA: "true"
+      JVM_VERSION: ${JVM_VERSION}
       MODPACK_PLATFORM: ${MODPACK_PLATFORM}
       CF_API_KEY: ${CF_API_KEY}
       CF_PAGE_URL: ${CF_PAGE_URL}
@@ -45,15 +48,18 @@ services:
     volumes:
       - ./${PROJECT_NAME}/modpacks:/modpacks:ro
       - ./${PROJECT_NAME}/mc-data:/data
+
   backup:
     image: itzg/mc-backup
     container_name: ${PROJECT_NAME}-backup
     profiles:
       - backup
     restart: unless-stopped
+    depends_on:
+      - mc-auto
     environment:
       BACKUP_INTERVAL: "2h"
-      RCON_HOST: mc
+      RCON_HOST: ${PROJECT_NAME}-mc
       BACKUP_METHOD: restic
       RESTIC_PASSWORD: ${RESTIC_PASSWORD}
       RESTIC_HOSTNAME: ${PROJECT_NAME}
