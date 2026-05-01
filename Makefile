@@ -4,7 +4,7 @@ ROOT_DIR:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 export $(shell sed 's/=.*//' $(ROOT_DIR)/.env)
 
 -include $(ROOT_DIR)/.$(PROJECT_NAME).env
-export $(shell sed 's/=.*//' $(ROOT_DIR)/.env)
+export $(shell sed 's/=.*//' $(ROOT_DIR)/.$(PROJECT_NAME).env)
 
 
 REQUIRED_VARS := PROJECT_NAME MODPACK_PLATFORM CF_PAGE_URL RESTIC_PASSWORD
